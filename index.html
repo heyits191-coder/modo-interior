@@ -1,0 +1,1085 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MODO Interior Designing | Mumbai</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              modo: {
+                teal: '#0A3B3A',
+                gold: '#D4AF37',
+                goldlight: '#E5C565',
+                offwhite: '#F9F9F7',
+                dark: '#051F1F'
+              }
+            },
+            fontFamily: {
+              heading: ['"Montserrat"', 'sans-serif'],
+              sans: ['"Inter"', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 1s ease-out forwards',
+              'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'zoom-in': 'zoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(40px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              zoomIn: {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0A3B3A; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D4AF37; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #E5C565; 
+      }
+    </style>
+
+    <!-- Import Map for React and Lucide -->
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+
+    <!-- Babel for in-browser compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-modo-offwhite text-modo-teal font-sans antialiased selection:bg-modo-gold selection:text-white">
+    <div id="root"></div>
+
+    <!-- Main Application Script -->
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'react';
+      import ReactDOM from 'react-dom/client';
+      import { 
+        Menu, X, Home, Armchair, ShoppingBag, 
+        PenTool, Layers, CheckCircle, Gem, 
+        Star, ChevronLeft, ChevronRight, Quote,
+        Mail, Phone, MapPin, Check 
+      } from 'lucide-react';
+
+      // --- Types (Virtual in JS, kept for reference/compilation) ---
+      
+      // type Category = 'All' | 'Residential' | 'Hospitality' | 'Retail';
+      // interface Project { id: number; title: string; category: Category; location: string; imageUrl: string; description: string; conceptNote: string; }
+      // interface Testimonial { id: number; name: string; role: string; content: string; rating: number; }
+      // interface Service { id: number; title: string; description: string; iconName: 'Home' | 'Hotel' | 'Store'; }
+
+      // --- Components/UI/Button ---
+
+      const Button = ({ 
+        children, 
+        variant = 'primary', 
+        fullWidth = false, 
+        className = '', 
+        ...props 
+      }) => {
+        const baseStyles = "py-3 px-8 text-sm md:text-base font-semibold tracking-wider transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2";
+        
+        const variants = {
+          primary: "bg-modo-gold text-white hover:bg-modo-goldlight shadow-lg hover:shadow-modo-gold/50 focus:ring-modo-gold",
+          outline: "border-2 border-modo-gold text-modo-gold hover:bg-modo-gold hover:text-white focus:ring-modo-gold",
+          "white-outline": "border-2 border-white text-white hover:bg-white hover:text-modo-teal focus:ring-white"
+        };
+
+        return (
+          <button 
+            className={`${baseStyles} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+            {...props}
+          >
+            {children}
+          </button>
+        );
+      };
+
+      // --- Components/UI/SectionHeading ---
+
+      const SectionHeading = ({ title, subtitle, light = false }) => {
+        return (
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className={`text-4xl md:text-5xl font-heading font-bold mb-4 ${light ? 'text-white' : 'text-modo-teal'}`}>
+              {title}
+            </h2>
+            <div className="w-24 h-1 bg-modo-gold mx-auto mb-6"></div>
+            {subtitle && (
+              <p className={`max-w-2xl mx-auto text-lg font-light tracking-wide ${light ? 'text-gray-300' : 'text-gray-600'}`}>
+                {subtitle}
+              </p>
+            )}
+          </div>
+        );
+      };
+
+      // --- Components/UI/ScrollReveal ---
+
+      const ScrollReveal = ({ 
+        children, 
+        animation = 'slide-up', 
+        delay = '0s', 
+        className = '',
+        threshold = 0.1
+      }) => {
+        const [isVisible, setIsVisible] = useState(false);
+        const ref = useRef(null);
+
+        useEffect(() => {
+          const observer = new IntersectionObserver(
+            ([entry]) => {
+              if (entry.isIntersecting) {
+                setIsVisible(true);
+                observer.disconnect(); // Only animate once
+              }
+            },
+            { threshold } 
+          );
+
+          if (ref.current) {
+            observer.observe(ref.current);
+          }
+
+          return () => {
+            if (ref.current) observer.unobserve(ref.current);
+          };
+        }, [threshold]);
+
+        const getAnimationClass = () => {
+          switch (animation) {
+            case 'fade-in': return 'animate-fade-in';
+            case 'slide-up': return 'animate-slide-up';
+            case 'zoom-in': return 'animate-zoom-in';
+            default: return 'animate-slide-up';
+          }
+        };
+
+        return (
+          <div 
+            ref={ref} 
+            className={`${className} ${isVisible ? getAnimationClass() : 'opacity-0'}`}
+            style={{ animationDelay: delay }}
+          >
+            {children}
+          </div>
+        );
+      };
+
+      // --- Components/Navbar ---
+
+      const Navbar = () => {
+        const [isScrolled, setIsScrolled] = useState(false);
+        const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+        useEffect(() => {
+          const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+          };
+          window.addEventListener('scroll', handleScroll);
+          return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
+
+        const navLinks = [
+          { name: 'Home', href: '#home' },
+          { name: 'Expertise', href: '#expertise' },
+          { name: 'Portfolio', href: '#portfolio' },
+          { name: 'About', href: '#about' },
+          { name: 'Contact', href: '#contact' },
+        ];
+
+        return (
+          <nav 
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+              isScrolled ? 'bg-modo-teal/95 backdrop-blur-sm shadow-xl py-4' : 'bg-transparent py-6'
+            }`}
+          >
+            <div className="container mx-auto px-6 flex justify-between items-center">
+              {/* Logo */}
+              <a href="#home" className="flex items-center group">
+                <div className={`font-heading text-2xl md:text-3xl font-bold tracking-widest ${isScrolled ? 'text-modo-gold' : 'text-modo-gold'}`}>
+                  MODO
+                </div>
+                <span className={`hidden md:block ml-3 text-xs tracking-[0.3em] uppercase font-bold ${isScrolled ? 'text-white' : 'text-white/90'}`}>
+                  Interior Designing
+                </span>
+              </a>
+
+              {/* Desktop Nav */}
+              <div className="hidden md:flex items-center space-x-8">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className={`text-sm font-heading font-medium uppercase tracking-widest hover:text-modo-gold transition-colors duration-300 ${
+                      isScrolled ? 'text-white' : 'text-white'
+                    }`}
+                  >
+                    {link.name}
+                  </a>
+                ))}
+                <a href="#contact" className="px-5 py-2 border border-modo-gold text-modo-gold hover:bg-modo-gold hover:text-white transition-all duration-300 text-sm font-heading font-bold uppercase tracking-wider">
+                  Book Consult
+                </a>
+              </div>
+
+              {/* Mobile Toggle */}
+              <button 
+                className="md:hidden text-modo-gold focus:outline-none"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+
+            {/* Mobile Menu */}
+            <div 
+              className={`md:hidden absolute top-full left-0 w-full bg-modo-teal border-t border-modo-gold/20 transition-all duration-300 overflow-hidden ${
+                isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="flex flex-col items-center py-8 space-y-6">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-white hover:text-modo-gold uppercase font-heading tracking-widest text-sm"
+                  >
+                    {link.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </nav>
+        );
+      };
+
+      // --- Components/Hero ---
+
+      const Hero = () => {
+        return (
+          <section id="home" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+            {/* Background Image with Overlay */}
+            <div 
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: 'url("https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
+              }}
+            >
+              <div className="absolute inset-0 bg-modo-teal/70 mix-blend-multiply"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-modo-dark/90 via-transparent to-modo-dark/30"></div>
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 container mx-auto px-6 text-center text-white">
+              <div className="space-y-10">
+                
+                <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight animate-slide-up">
+                  Transforming Spaces <br />
+                  <span className="text-modo-gold font-light italic inline-block mt-2">with Timeless Elegance</span>
+                </h1>
+                
+                <div className="flex flex-col md:flex-row justify-center items-center gap-4 pt-4 animate-slide-up [animation-delay:0.3s] opacity-0 fill-mode-forwards">
+                  <Button onClick={() => document.getElementById('contact')?.scrollIntoView()}>
+                    Book Consultation
+                  </Button>
+                  <Button variant="white-outline" onClick={() => document.getElementById('portfolio')?.scrollIntoView()}>
+                    Explore Portfolio
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Scroll indicator */}
+            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block opacity-0 animate-fade-in [animation-delay:1s] fill-mode-forwards">
+              <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-modo-gold to-transparent"></div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/Expertise ---
+
+      const Expertise = () => {
+        return (
+          <section id="expertise" className="py-24 bg-white">
+            <div className="container mx-auto px-6">
+              <ScrollReveal animation="fade-in">
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl font-heading font-bold text-modo-teal mb-4">Our Expertise</h2>
+                  <div className="w-16 h-1 bg-modo-gold mx-auto"></div>
+                </div>
+              </ScrollReveal>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                
+                {/* Residential */}
+                <ScrollReveal animation="slide-up" delay="0s">
+                  <div className="group p-10 border border-gray-100 hover:border-modo-gold/30 rounded-sm transition-all duration-500 hover:shadow-2xl hover:bg-modo-offwhite text-center h-full">
+                    <div className="w-16 h-16 mx-auto mb-8 bg-modo-teal rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-modo-gold shadow-lg group-hover:scale-110">
+                      <Home className="text-white w-7 h-7" />
+                    </div>
+                    <h3 className="text-2xl font-heading font-bold text-modo-teal mb-4">Residential</h3>
+                    <p className="text-gray-600 font-light leading-relaxed">
+                      Crafting bespoke homes that reflect your personality. From luxury penthouses to cozy apartments, we curate spaces for living well.
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+                {/* Hospitality */}
+                <ScrollReveal animation="slide-up" delay="0.2s">
+                  <div className="group p-10 border border-gray-100 hover:border-modo-gold/30 rounded-sm transition-all duration-500 hover:shadow-2xl hover:bg-modo-offwhite text-center h-full">
+                    <div className="w-16 h-16 mx-auto mb-8 bg-modo-teal rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-modo-gold shadow-lg group-hover:scale-110">
+                      <Armchair className="text-white w-7 h-7" />
+                    </div>
+                    <h3 className="text-2xl font-heading font-bold text-modo-teal mb-4">Hospitality</h3>
+                    <p className="text-gray-600 font-light leading-relaxed">
+                      Designing immersive experiences for hotels, resorts, and lounges. We focus on guest comfort, flow, and memorable aesthetics.
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+                {/* Retail */}
+                <ScrollReveal animation="slide-up" delay="0.4s">
+                  <div className="group p-10 border border-gray-100 hover:border-modo-gold/30 rounded-sm transition-all duration-500 hover:shadow-2xl hover:bg-modo-offwhite text-center h-full">
+                    <div className="w-16 h-16 mx-auto mb-8 bg-modo-teal rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-modo-gold shadow-lg group-hover:scale-110">
+                      <ShoppingBag className="text-white w-7 h-7" />
+                    </div>
+                    <h3 className="text-2xl font-heading font-bold text-modo-teal mb-4">Retail</h3>
+                    <p className="text-gray-600 font-light leading-relaxed">
+                      Creating visually stunning retail environments that enhance brand identity and drive customer engagement through strategic design.
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/Portfolio ---
+
+      const projects = [
+        {
+          id: 1,
+          title: "The Gilded Apartment",
+          category: "Residential",
+          location: "Bandra West, Mumbai",
+          imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "A 3BHK luxury apartment redesigned with a focus on gold accents and deep emerald tones.",
+          conceptNote: "We wanted to bring the client's love for Art Deco into a modern Mumbai setting. Using brass inlays and velvet textures, we achieved a timeless look."
+        },
+        {
+          id: 2,
+          title: "Azure Coast Resort",
+          category: "Hospitality",
+          location: "Alibaug",
+          imageUrl: "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "A boutique resort lobby and suite design focusing on natural light and coastal materials.",
+          conceptNote: "Biophilic design was key here. We blurred the lines between indoors and outdoors using floor-to-ceiling glass and natural stone textures."
+        },
+        {
+          id: 3,
+          title: "Vogue Boutique",
+          category: "Retail",
+          location: "Fort, Mumbai",
+          imageUrl: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "High-end fashion retail store with minimalist racking and dramatic lighting.",
+          conceptNote: "The clothes needed to be the hero. We used a monochromatic palette with strategic spotlighting to create a gallery-like experience."
+        },
+        {
+          id: 4,
+          title: "Oberoi Sky Heights",
+          category: "Residential",
+          location: "Andheri West, Mumbai",
+          imageUrl: "https://images.unsplash.com/photo-1600210492493-0946911123ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "Modern minimalist home for a young couple.",
+          conceptNote: "Clean lines, hidden storage, and a neutral palette were used to make the space feel larger and more serene amidst the city chaos."
+        },
+        {
+          id: 5,
+          title: "Saffron Spices",
+          category: "Hospitality",
+          location: "Juhu, Mumbai",
+          imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "Fine dining restaurant interior blending Indian heritage with contemporary style.",
+          conceptNote: "Rich warm tones, intricate jaali work, and custom copper lighting fixtures created an intimate dining atmosphere."
+        },
+        {
+          id: 6,
+          title: "Luxe Gold Showroom",
+          category: "Retail",
+          location: "Bandra Kurla Complex",
+          imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80",
+          description: "Jewelry showroom design prioritizing security and luxury display.",
+          conceptNote: "We used plush carpeting and soft, diffuse lighting to make customers feel comfortable while high-CRI spots made the jewelry sparkle."
+        }
+      ];
+
+      const Portfolio = () => {
+        const [filter, setFilter] = useState('All');
+        const [selectedProject, setSelectedProject] = useState(null);
+
+        const filteredProjects = filter === 'All' 
+          ? projects 
+          : projects.filter(p => p.category === filter);
+
+        return (
+          <section id="portfolio" className="py-24 bg-modo-offwhite">
+            <div className="container mx-auto px-6">
+              <ScrollReveal animation="slide-up">
+                <SectionHeading 
+                  title="Curated Portfolio" 
+                  subtitle="Explore our selection of handcrafted interiors across residential and commercial spaces." 
+                />
+              </ScrollReveal>
+
+              {/* Filters */}
+              <ScrollReveal animation="fade-in" delay="0.2s">
+                <div className="flex flex-wrap justify-center gap-4 mb-12">
+                  {['All', 'Residential', 'Hospitality', 'Retail'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setFilter(cat)}
+                      className={`px-6 py-2 uppercase font-heading font-semibold tracking-widest text-sm transition-all duration-300 border ${
+                        filter === cat 
+                          ? 'bg-modo-teal text-white border-modo-teal shadow-lg' 
+                          : 'bg-transparent text-modo-teal border-modo-teal hover:bg-modo-teal/10'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </ScrollReveal>
+
+              {/* Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProjects.map((project, index) => (
+                  <ScrollReveal key={project.id} animation="zoom-in" delay={`${index * 0.1}s`}>
+                    <div 
+                      onClick={() => setSelectedProject(project)}
+                      className="group cursor-pointer relative overflow-hidden shadow-lg aspect-[4/3] bg-gray-200"
+                    >
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-modo-teal/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-6 text-center">
+                        <h3 className="font-heading font-bold text-2xl mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">{project.title}</h3>
+                        <p className="text-sm font-light uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">{project.category}</p>
+                        <div className="mt-4 w-10 h-10 border border-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
+                          <span className="text-xl">+</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal */}
+            {selectedProject && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div 
+                  className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
+                  onClick={() => setSelectedProject(null)}
+                ></div>
+                <div className="relative bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl animate-zoom-in flex flex-col md:flex-row rounded-sm">
+                  <button 
+                    onClick={() => setSelectedProject(null)}
+                    className="absolute top-4 right-4 z-10 text-white md:text-gray-800 bg-black/50 md:bg-transparent rounded-full p-1 hover:text-modo-gold transition-colors"
+                  >
+                    <X size={32} />
+                  </button>
+
+                  {/* Image Side */}
+                  <div className="w-full md:w-1/2 h-64 md:h-auto">
+                    <img 
+                      src={selectedProject.imageUrl} 
+                      alt={selectedProject.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Content Side */}
+                  <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                    <span className="text-modo-gold text-xs font-bold uppercase tracking-widest mb-2 font-heading">{selectedProject.category}</span>
+                    <h3 className="text-3xl md:text-4xl font-heading font-bold text-modo-teal mb-4">{selectedProject.title}</h3>
+                    
+                    <div className="flex items-center text-gray-500 mb-6 text-sm">
+                      <MapPin size={16} className="mr-2 text-modo-gold" />
+                      {selectedProject.location}
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-bold font-heading text-modo-teal mb-2">Overview</h4>
+                        <p className="text-gray-600 font-light leading-relaxed">{selectedProject.description}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-bold font-heading text-modo-teal mb-2">Concept Note</h4>
+                        <p className="text-gray-600 font-light leading-relaxed italic border-l-2 border-modo-gold pl-4">
+                          "{selectedProject.conceptNote}"
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      };
+
+      // --- Components/WhyUs ---
+
+      const WhyUs = () => {
+        const usps = [
+          {
+            icon: <PenTool size={32} />,
+            title: "Bespoke Designs",
+            description: "Tailored specifically to your lifestyle and preferences, ensuring no two projects look the same."
+          },
+          {
+            icon: <Gem size={32} />,
+            title: "Premium Materials",
+            description: "We source only the finest materials, fabrics, and finishes to ensure longevity and luxury."
+          },
+          {
+            icon: <CheckCircle size={32} />,
+            title: "End-to-End Execution",
+            description: "From concept sketches to the final cushion placement, we manage the entire turnkey process."
+          },
+          {
+            icon: <Layers size={32} />,
+            title: "Modern Aesthetics",
+            description: "Blending contemporary trends with timeless elegance to create spaces that stay relevant."
+          }
+        ];
+
+        return (
+          <section className="py-24 bg-modo-teal relative overflow-hidden">
+            {/* Texture Overlay */}
+            <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            
+            <div className="container mx-auto px-6 relative z-10">
+              <ScrollReveal animation="fade-in">
+                <SectionHeading 
+                  title="Why Choose MODO" 
+                  subtitle="We elevate interior design from a service to an experience." 
+                  light={true} 
+                />
+              </ScrollReveal>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                {usps.map((usp, index) => (
+                  <ScrollReveal key={index} animation="slide-up" delay={`${index * 0.15}s`}>
+                    <div 
+                      className="flex flex-col items-center text-center group"
+                    >
+                      <div className="w-24 h-24 rounded-full border-2 border-modo-gold flex items-center justify-center text-modo-gold mb-6 transition-all duration-500 group-hover:bg-modo-gold group-hover:text-modo-teal group-hover:scale-110">
+                        {usp.icon}
+                      </div>
+                      <h3 className="text-xl font-heading font-bold text-white mb-3">{usp.title}</h3>
+                      <p className="text-gray-300 font-light text-sm leading-relaxed px-4">
+                        {usp.description}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/About ---
+
+      const About = () => {
+        return (
+          <section id="about" className="py-24 bg-modo-offwhite overflow-hidden">
+            <div className="container mx-auto px-6">
+              <div className="flex flex-col lg:flex-row items-center gap-16">
+                
+                {/* Image Side */}
+                <div className="lg:w-1/2 relative">
+                  <ScrollReveal animation="zoom-in" delay="0.2s">
+                    <div className="relative z-10 w-full max-w-md mx-auto aspect-[4/5] overflow-hidden border-2 border-modo-gold/20 shadow-2xl">
+                      <img 
+                        src="https://images.unsplash.com/photo-1598550880863-4e8aa3d0edb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                        alt="Mitsli Mody Doshi" 
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 filter sepia-[0.1]"
+                      />
+                    </div>
+                    {/* Decorative Element */}
+                    <div className="absolute -bottom-6 -right-6 w-full h-full border-2 border-modo-teal/30 z-0"></div>
+                  </ScrollReveal>
+                </div>
+
+                {/* Text Side */}
+                <div className="lg:w-1/2 text-center lg:text-left">
+                  <ScrollReveal animation="slide-up">
+                    <h4 className="text-modo-gold font-bold uppercase tracking-widest text-sm mb-2 font-heading">Founder</h4>
+                    <h2 className="text-4xl md:text-5xl font-heading font-bold text-modo-teal mb-6">
+                      Mitsli Mody Doshi
+                    </h2>
+                    
+                    <div className="text-gray-600 font-light leading-relaxed text-lg font-sans">
+                      <p>
+                        With a vision to redefine luxury living, Mitsli founded <strong className="text-modo-teal font-medium">MODO Interior Designing</strong> to bridge the gap between functional comfort and high-end aesthetics. Her detailed approach creates harmonious spaces that tell a unique story through texture, light, and timeless elegance.
+                      </p>
+                    </div>
+
+                    <div className="mt-8">
+                      <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Signature_sample.svg" 
+                        alt="Signature" 
+                        className="h-16 opacity-60 mx-auto lg:mx-0 filter invert-[.25] sepia-[.5] saturate-[300%] hue-rotate-[130deg]" 
+                      />
+                    </div>
+                  </ScrollReveal>
+                </div>
+                
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/Testimonials ---
+
+      const testimonials = [
+        {
+          id: 1,
+          name: "Rajesh & Priya Malhotra",
+          role: "Homeowners, Bandra",
+          content: "Working with MODO was a revelation. Mitsli understood our need for a home that feels luxurious yet livable. The attention to detail in the master bedroom is simply stunning.",
+          rating: 5
+        },
+        {
+          id: 2,
+          name: "Vikram Sethi",
+          role: "GM, The Urban Hotel",
+          content: "We hired MODO for our lobby renovation. They perfectly captured the 'Modern India' vibe we wanted. Guests constantly compliment the reception area design.",
+          rating: 5
+        },
+        {
+          id: 3,
+          name: "Ananya Desai",
+          role: "Fashion Designer",
+          content: "My studio needed to look chic and professional. MODO used lighting and mirrors so effectively that the space looks twice as big. Truly premium work.",
+          rating: 5
+        }
+      ];
+
+      const Testimonials = () => {
+        const [currentIndex, setCurrentIndex] = useState(0);
+
+        const next = () => {
+          setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        };
+
+        const prev = () => {
+          setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+        };
+
+        // Auto-slide
+        useEffect(() => {
+          const timer = setInterval(next, 5000);
+          return () => clearInterval(timer);
+        }, []);
+
+        return (
+          <section className="py-24 bg-white">
+            <div className="container mx-auto px-6">
+              <div className="flex flex-col items-center justify-center">
+                <ScrollReveal animation="fade-in">
+                  <div className="mb-12">
+                    <h2 className="text-3xl font-heading font-bold text-modo-teal text-center">Client Testimonials</h2>
+                  </div>
+                </ScrollReveal>
+
+                <ScrollReveal animation="slide-up" className="w-full flex justify-center">
+                  <div className="relative w-full max-w-4xl">
+                    {/* Buttons */}
+                    <button 
+                      onClick={prev}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 p-2 rounded-full border border-modo-gold text-modo-gold hover:bg-modo-gold hover:text-white transition-colors z-10"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button 
+                      onClick={next}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 p-2 rounded-full border border-modo-gold text-modo-gold hover:bg-modo-gold hover:text-white transition-colors z-10"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+
+                    {/* Card */}
+                    <div className="bg-modo-offwhite p-8 md:p-12 rounded-lg shadow-xl border-t-4 border-modo-gold min-h-[300px] flex flex-col justify-center items-center text-center relative overflow-hidden">
+                      <div className="animate-fade-in" key={currentIndex}>
+                        <Quote size={48} className="text-modo-gold/20 absolute top-6 left-6" />
+                        
+                        <div className="flex justify-center gap-1 mb-6">
+                          {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                            <Star key={i} size={20} className="fill-modo-gold text-modo-gold" />
+                          ))}
+                        </div>
+
+                        <p className="text-xl md:text-2xl font-heading font-medium text-gray-700 italic mb-8 leading-relaxed">
+                          "{testimonials[currentIndex].content}"
+                        </p>
+
+                        <div>
+                          <h4 className="text-modo-teal font-bold font-heading text-lg">{testimonials[currentIndex].name}</h4>
+                          <p className="text-modo-gold text-sm uppercase tracking-wider">{testimonials[currentIndex].role}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Dots */}
+                    <div className="flex justify-center gap-2 mt-8">
+                      {testimonials.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentIndex(idx)}
+                          className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                            currentIndex === idx ? 'bg-modo-gold w-8' : 'bg-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/Contact ---
+
+      const Contact = () => {
+        const [formData, setFormData] = useState({
+          name: '',
+          phone: '',
+          email: '',
+          service: 'Residential',
+          budget: '',
+          message: ''
+        });
+
+        const handleChange = (e) => {
+          setFormData({ ...formData, [e.target.name]: e.target.value });
+        };
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          alert("Thank you for your inquiry. MODO Interior Designing will contact you shortly.");
+          setFormData({ name: '', phone: '', email: '', service: 'Residential', budget: '', message: '' });
+        };
+
+        return (
+          <section id="contact" className="py-24 bg-white">
+            <div className="container mx-auto px-6">
+              <ScrollReveal animation="fade-in">
+                <SectionHeading 
+                  title="Start Your Journey" 
+                  subtitle="Ready to transform your space? Let's discuss your vision."
+                />
+              </ScrollReveal>
+
+              {/* Form Container */}
+              <ScrollReveal animation="slide-up">
+                <div className="max-w-3xl mx-auto bg-modo-offwhite shadow-xl rounded-sm border border-gray-100 p-8 md:p-12 mb-20">
+                  <h3 className="text-2xl font-heading font-bold text-modo-teal mb-8 text-center">Inquire Now</h3>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Name</label>
+                        <input 
+                          type="text" 
+                          name="name"
+                          required
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="w-full bg-white border-b-2 border-gray-300 focus:border-modo-gold outline-none py-2 px-1 transition-colors font-sans"
+                          placeholder="Your Full Name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Phone</label>
+                        <input 
+                          type="tel" 
+                          name="phone"
+                          required
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="w-full bg-white border-b-2 border-gray-300 focus:border-modo-gold outline-none py-2 px-1 transition-colors font-sans"
+                          placeholder="+91"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Email</label>
+                        <input 
+                          type="email" 
+                          name="email"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full bg-white border-b-2 border-gray-300 focus:border-modo-gold outline-none py-2 px-1 transition-colors font-sans"
+                          placeholder="email@example.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Service Type</label>
+                        <select 
+                          name="service"
+                          value={formData.service}
+                          onChange={handleChange}
+                          className="w-full bg-white border-b-2 border-gray-300 focus:border-modo-gold outline-none py-2 px-1 transition-colors font-sans"
+                        >
+                          <option value="Residential">Residential Design</option>
+                          <option value="Hospitality">Hospitality Design</option>
+                          <option value="Retail">Retail Design</option>
+                          <option value="Consultation">General Consultation</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Budget Range (Optional)</label>
+                      <input 
+                        type="text" 
+                        name="budget"
+                        value={formData.budget}
+                        onChange={handleChange}
+                        className="w-full bg-white border-b-2 border-gray-300 focus:border-modo-gold outline-none py-2 px-1 transition-colors font-sans"
+                        placeholder="e.g. ₹20 Lakhs - ₹50 Lakhs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2 font-heading">Message</label>
+                      <textarea 
+                        name="message"
+                        rows={4}
+                        value={formData.message}
+                        onChange={handleChange}
+                        className="w-full bg-white border-2 border-gray-200 focus:border-modo-gold outline-none py-3 px-4 rounded-sm transition-colors font-sans"
+                        placeholder="Tell us a bit about your project requirements..."
+                      ></textarea>
+                    </div>
+
+                    <div className="pt-4">
+                      <Button type="submit" fullWidth>Request Consultation</Button>
+                    </div>
+                  </form>
+                </div>
+              </ScrollReveal>
+
+              {/* Contact Details Grid */}
+              <div className="max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Phone */}
+                  <ScrollReveal animation="zoom-in" delay="0s" className="h-full">
+                    <div className="flex flex-col items-center text-center p-8 bg-white border border-gray-100 shadow-lg hover:shadow-xl transition-shadow rounded-sm group h-full">
+                      <div className="w-16 h-16 bg-modo-teal text-white rounded-full flex items-center justify-center mb-6 group-hover:bg-modo-gold transition-colors">
+                        <Phone size={28} />
+                      </div>
+                      <h4 className="text-xl font-heading font-bold text-modo-teal mb-2">Phone</h4>
+                      <p className="text-gray-600 font-light">+91 9967353094</p>
+                    </div>
+                  </ScrollReveal>
+
+                  {/* Email */}
+                  <ScrollReveal animation="zoom-in" delay="0.1s" className="h-full">
+                    <div className="flex flex-col items-center text-center p-8 bg-white border border-gray-100 shadow-lg hover:shadow-xl transition-shadow rounded-sm group h-full">
+                      <div className="w-16 h-16 bg-modo-teal text-white rounded-full flex items-center justify-center mb-6 group-hover:bg-modo-gold transition-colors">
+                        <Mail size={28} />
+                      </div>
+                      <h4 className="text-xl font-heading font-bold text-modo-teal mb-2">Email</h4>
+                      <p className="text-gray-600 font-light">design.modo@gmail.com</p>
+                    </div>
+                  </ScrollReveal>
+
+                  {/* Location */}
+                  <ScrollReveal animation="zoom-in" delay="0.2s" className="h-full">
+                    <div className="flex flex-col items-center text-center p-8 bg-white border border-gray-100 shadow-lg hover:shadow-xl transition-shadow rounded-sm group h-full">
+                      <div className="w-16 h-16 bg-modo-teal text-white rounded-full flex items-center justify-center mb-6 group-hover:bg-modo-gold transition-colors">
+                        <MapPin size={28} />
+                      </div>
+                      <h4 className="text-xl font-heading font-bold text-modo-teal mb-2">Location</h4>
+                      <p className="text-gray-600 font-light">Mumbai, Maharashtra, India</p>
+                    </div>
+                  </ScrollReveal>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        );
+      };
+
+      // --- Components/Footer ---
+
+      const Footer = () => {
+        return (
+          <footer className="bg-modo-dark text-white pt-20 pb-10 border-t border-modo-gold/20">
+            <div className="container mx-auto px-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                
+                {/* Brand Column */}
+                <div>
+                  <div className="font-heading text-3xl font-bold text-modo-gold mb-4">MODO</div>
+                  <p className="text-gray-400 font-light text-sm mb-6 leading-relaxed">
+                    Creating timeless environments that blend modern luxury with functional elegance. Your vision, our expertise.
+                  </p>
+                  <div className="flex space-x-4">
+                    <a href="#" className="w-10 h-10 rounded-full border border-modo-gold/50 flex items-center justify-center text-modo-gold hover:bg-modo-gold hover:text-white transition-all">
+                      <Instagram size={18} />
+                    </a>
+                    <a href="#" className="w-10 h-10 rounded-full border border-modo-gold/50 flex items-center justify-center text-modo-gold hover:bg-modo-gold hover:text-white transition-all">
+                      <Facebook size={18} />
+                    </a>
+                    <a href="#" className="w-10 h-10 rounded-full border border-modo-gold/50 flex items-center justify-center text-modo-gold hover:bg-modo-gold hover:text-white transition-all">
+                      <Linkedin size={18} />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Quick Links */}
+                <div>
+                  <h4 className="text-lg font-heading font-semibold mb-6 border-b border-modo-gold/30 inline-block pb-2">Quick Links</h4>
+                  <ul className="space-y-3 text-gray-400 font-light text-sm">
+                    <li><a href="#home" className="hover:text-modo-gold transition-colors">Home</a></li>
+                    <li><a href="#expertise" className="hover:text-modo-gold transition-colors">Expertise</a></li>
+                    <li><a href="#portfolio" className="hover:text-modo-gold transition-colors">Portfolio</a></li>
+                    <li><a href="#about" className="hover:text-modo-gold transition-colors">About Founder</a></li>
+                    <li><a href="#contact" className="hover:text-modo-gold transition-colors">Contact</a></li>
+                  </ul>
+                </div>
+
+                {/* Contact Details */}
+                <div>
+                  <h4 className="text-lg font-heading font-semibold mb-6 border-b border-modo-gold/30 inline-block pb-2">Contact Us</h4>
+                  <ul className="space-y-4 text-gray-400 font-light text-sm">
+                    <li className="flex items-start gap-3">
+                      <MapPin size={18} className="text-modo-gold shrink-0 mt-1" />
+                      <span>Mumbai, Maharashtra, India</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Phone size={18} className="text-modo-gold shrink-0" />
+                      <span>+91 9967353094</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Mail size={18} className="text-modo-gold shrink-0" />
+                      <span>design.modo@gmail.com</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Map */}
+                <div className="h-48 bg-gray-800 rounded-sm overflow-hidden border border-gray-700">
+                  <iframe 
+                    title="Mumbai Map"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74109995701785!3d19.08219783958221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1699999999999!5m2!1sen!2sin" 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0, filter: 'grayscale(100%) invert(90%) contrast(80%)' }} 
+                    allowFullScreen 
+                    loading="lazy"
+                  ></iframe>
+                </div>
+
+              </div>
+
+              {/* Bottom Bar */}
+              <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-xs font-light tracking-wide">
+                <p>&copy; {new Date().getFullYear()} MODO Interior Designing. All rights reserved.</p>
+              </div>
+            </div>
+          </footer>
+        );
+      };
+
+      // --- App ---
+
+      function App() {
+        return (
+          <div className="min-h-screen flex flex-col font-sans">
+            <Navbar />
+            <main className="flex-grow">
+              <Hero />
+              <Expertise />
+              <Portfolio />
+              <WhyUs />
+              <About />
+              <Testimonials />
+              <Contact />
+            </main>
+            <Footer />
+          </div>
+        );
+      }
+
+      // --- Root Render ---
+
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+      }
+    </script>
+  </body>
+</html>
+    
